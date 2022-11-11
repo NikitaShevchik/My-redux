@@ -1,6 +1,6 @@
 // import { cretStor } from "../script";
 
-import { createStore, createStoreCounter, createStoree, createStoreTodo, cretStor, switchCounter } from "../redux/store.js"
+import { createStore, createStoreCounter, createStoree, cretStor, switchCounter } from "../redux/store.js"
 
 let store = cretStor('reducer', 0)
 
@@ -74,9 +74,6 @@ function counterSwitcher(state, action) {
     }
 }
 
-console.log(switcherCounter.getState())
-console.log(switcherCounter.getState())
-
 
 const addToState = document.querySelector('.addToState');
 addToState.addEventListener('click', () => {
@@ -98,10 +95,10 @@ addToState.addEventListener('click', () => {
 
 const addNumber = document.querySelectorAll('.addNumber')
 
-function displayCounter() {
-    document.querySelector('.displayStateCounter').innerHTML = counterStore.getState()
-}
-displayCounter()
+// function displayCounter() {
+//     document.querySelector('.displayStateCounter').innerHTML = counterStore.getState()
+// }
+// displayCounter()
 
 for (let button of addNumber) {
     button.addEventListener('click', (e) => {
@@ -116,11 +113,13 @@ for (let button of addNumber) {
                 number: Number(e.target.innerHTML)
             })
         }
-        displayCounter()
+        // displayCounter()
         console.log(counterStore.getState())
     })
 }
 
+switcherCounter.subscribe(() => console.log('Switcher set to', switcherCounter.getState()))
+counterStore.subscribe(() => document.querySelector('.displayStateCounter').innerHTML = counterStore.getState())
 
 // addSix.map(button => {
 //     button.addEventListener('click', (e) => {

@@ -81,32 +81,58 @@ export function createStoree(reducer, initialState) {
     }
 }
 
-export function createStoreCounter(reducer, initialState) {
-    let state = initialState;
-    return {
-        getState: () => state,
-        dispatch(action) {
-            state = reducer(state, action);
-            return action;
-        }
-    }
-}
-
-export function switchCounter(reducer, initialState) {
-    let state = initialState;
-    return {
-        getState: () => state,
-        dispath(action) {
-            state = reducer(state, action);
-            return action;
-        }
-    }
-}
-
-export function createStoreTodo(reducer, initialState) {
+export function createStoreNext(reducer, initialState) {
     let state = initialState
     return {
         dispatch: action => { state = reducer(state, action) },
         getState: () => state,
+    }
+}
+
+export function createStoreCounter(reducer, initialState) {
+    let state = initialState;
+    let subscribing = () => { };
+    return {
+        getState: () => state,
+        dispatch(action) {
+            state = reducer(state, action);
+            subscribing()
+            return action;
+        },
+        subscribe(subscrib) {
+            subscribing = subscrib;
+        }
+    }
+}
+
+// export function switchCounter(reducer, initialState) {
+//     let state = initialState;
+//     let subscribing;
+//     return {
+//         getState: () => state,
+//         dispath(action) {
+//             state = reducer(state, action);
+//             subscribing()
+//             return action;
+//         },
+//         subscribe(subscrib) {
+//             subscribing = subscrib();
+//         }
+//     }
+// }
+
+export function switchCounter(reducer, initialState) {
+    let state = initialState;
+    let subscribing = () => { };
+    return {
+        getState: () => state,
+        dispath(action) {
+            state = reducer(state, action);
+            subscribing()
+            return action;
+        },
+        subscribe(subscrib) {
+            subscribing = subscrib;
+        }
     }
 }
