@@ -1,23 +1,33 @@
-interface createStore {
-    state: string;
-}
-interface action {
-    type: string;
-    name?: string;
-    any?: string;
-}
+// interface createStore {
+//     state: string;
+// }
+// interface action {
+//     type: string;
+//     name?: string;
+// }
+// interface arrayTodo {
+//     name: string,
+//     id: number,
+//     complete: boolean
+// }
 
-function createStore(reducer: Function, initialState: number | Object) {
+function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
     let state = initialState;
-    let subscribing: Function;
+    let subscribing;
+    function dispatch(action: {
+        type: string;
+        payload?: Partial<T>
+    }) {
+        reducer(state, action);
+    }
     return {
         getState: () => state,
-        dispatch(action: action) {
+        dispatch(action) {
             state = reducer(state, action);
             subscribing()
             return action;
         },
-        subscribe(subscrib: Function) {
+        subscribe(subscrib) {
             subscribing = subscrib;
         }
     }
@@ -28,7 +38,7 @@ const root = document.querySelector('#root') as any | null;
 
 store.subscribe(() => root.innerHTML = store.getState())
 
-function counterLogic(state: number, action: action) {
+function counterLogic(state, action) {
     switch (action.type) {
         case 'addOne':
             return state = state + 1;
@@ -54,7 +64,7 @@ buttonMinus?.addEventListener('click', () => {
     })
 })
 
-function todoLogic(state: Object | null, action: action) {
+function todoLogic(state, action) {
     switch (action.type) {
         case 'pushName':
             return state = [...state, action.name];
@@ -64,7 +74,6 @@ function todoLogic(state: Object | null, action: action) {
 }
 
 const storePush = createStore(todoLogic, []);
-// console.log(storePush.getState())
 storePush.subscribe(() => console.log(storePush.getState()))
 
 storePush.dispatch({

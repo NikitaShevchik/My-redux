@@ -118,6 +118,18 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"script.ts":[function(require,module,exports) {
+// interface createStore {
+//     state: string;
+// }
+// interface action {
+//     type: string;
+//     name?: string;
+// }
+// interface arrayTodo {
+//     name: string,
+//     id: number,
+//     complete: boolean
+// }
 var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
   if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
     if (ar || !(i in from)) {
@@ -130,6 +142,9 @@ var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
 function createStore(reducer, initialState) {
   var state = initialState;
   var subscribing;
+  function dispatch(action) {
+    reducer(state, action);
+  }
   return {
     getState: function getState() {
       return state;
@@ -180,7 +195,6 @@ function todoLogic(state, action) {
   }
 }
 var storePush = createStore(todoLogic, []);
-// console.log(storePush.getState())
 storePush.subscribe(function () {
   return console.log(storePush.getState());
 });
@@ -225,7 +239,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64776" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57886" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
