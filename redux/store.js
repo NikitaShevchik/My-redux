@@ -55,8 +55,58 @@ export function cretStor(reducer, initialState) {
 
 const store = cretStor('red', 0)
 
-console.log(store.getState())
-console.log(store.addOne())
 // console.log(store.getState())
-console.log(store.addOne())
+// console.log(store.addOne())
 // console.log(store.getState())
+// console.log(store.addOne())
+// console.log(store.getState())
+
+
+export function createStore(reducer, initialState) {
+    let state = initialState;
+    return {
+        getState: () => state,
+        dispatch: { reducer: () => console.log(reducer) }
+    }
+}
+
+export function createStoree(reducer, initialState) {
+    let state = initialState;
+    return {
+        getState: () => state,
+        dispatch(action) {
+            reducer === 'sayHello' && console.log('Hello world yo ' + action),
+                reducer === 'sayHow' && csonsole.log('How How How ' + action)
+        }
+    }
+}
+
+export function createStoreCounter(reducer, initialState) {
+    let state = initialState;
+    return {
+        getState: () => state,
+        dispatch(action) {
+            state = reducer(state, action);
+            return action;
+        }
+    }
+}
+
+export function switchCounter(reducer, initialState) {
+    let state = initialState;
+    return {
+        getState: () => state,
+        dispath(action) {
+            state = reducer(state, action);
+            return action;
+        }
+    }
+}
+
+export function createStoreTodo(reducer, initialState) {
+    let state = initialState
+    return {
+        dispatch: action => { state = reducer(state, action) },
+        getState: () => state,
+    }
+}
