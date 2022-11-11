@@ -65,6 +65,7 @@ function counterLogic(state, action) {
             return state
     }
 }
+
 function counterSwitcher(state, action) {
     switch (action.type) {
         case 'switch':
