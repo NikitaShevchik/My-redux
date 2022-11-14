@@ -1,5 +1,6 @@
 .wrapper {
-  max-width: 600px;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .first {
@@ -7,6 +8,30 @@
   padding: 20px;
 }
 
-._done {
+.todo__element {
+  cursor: pointer;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.todo__element:hover {
+  font-weight: 600;
+}
+.todo__element p[data-done=true] {
   text-decoration: line-through;
+  color: red;
+  opacity: 0.5;
+}
+.todo__item {
+  margin: 0 10px 0 0;
+}
+
+.addtodo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.addtodo input {
+  flex: 1 1 auto;
 }

@@ -126,13 +126,18 @@ Object.defineProperty(exports, "__esModule", {
 exports.createStore = void 0;
 function createStore(reducer, initialState) {
   var state = initialState;
+  var subscribing;
   return {
     getState: function getState() {
       return state;
     },
     dispatch: function dispatch(action) {
       state = reducer(state, action);
+      subscribing();
       return action;
+    },
+    subscribe: function subscribe(subscrib) {
+      subscribing = subscrib;
     }
   };
 }
@@ -157,6 +162,7 @@ var todoState = [{
   done: true,
   id: 2
 }];
+// console.log(todoState.find(todo => todo.id === 0).done)
 var todoActionTypes;
 (function (todoActionTypes) {
   todoActionTypes["ADD_TODO"] = "ADD_TODO";
@@ -170,10 +176,17 @@ function todoReducer(state, action) {
       return state;
     case 'REMOVE_TODO':
       return state = state.filter(function (todo) {
-        return action.payload.id !== todo.id;
+        return action.payload !== todo.id;
       });
     case 'SET_TODO':
+      // let idState = state.find(todo => todo.id === action.payload).id
+      // return state.find((todo => todo.id === action.payload).text)
       state[action.payload].done = !state[action.payload].done;
+      // let newState = state;
+      // let doneif = newState.find(todo => todo.id === action.payload).text
+      // let doneif = newState.find(todo => todo.id === action.payload).done
+      // state[action.payload].done = false
+      // console.log(doneif)
       return state;
     default:
       return action;
@@ -181,27 +194,94 @@ function todoReducer(state, action) {
 }
 var store = (0, store_1.createStore)(todoReducer, todoState);
 // console.log(todoState)
-console.log(store.getState());
-store.dispatch({
-  type: 'ADD_TODO',
-  payload: {
-    text: 'Nikita',
-    done: false,
-    id: 3
-  }
-});
+// console.log(store.getState())
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nikita',
+//         done: false,
+//         id: 3
+//     }
+// })
 var todo = document.querySelector('.todo');
-var storage = store.getState();
-storage.map(function (y) {
-  return todo === null || todo === void 0 ? void 0 : todo.innerHTML += "<p id=\"".concat(y.id, "\" data-done=\"").concat(y.done, "\">").concat(y.text, "</p>");
-});
 // console.log(todo?.children)
-for (var _i = 0, _a = todo === null || todo === void 0 ? void 0 : todo.children; _i < _a.length; _i++) {
-  var k = _a[_i];
-  if (k.dataset.done === 'true') {
-    k.classList.toggle('_done');
+function updateTodo() {
+  var storage = store.getState();
+  todo === null || todo === void 0 ? void 0 : todo.innerHTML = '';
+  storage.map(function (y) {
+    return todo === null || todo === void 0 ? void 0 : todo.innerHTML += "<div class=\"todo__element\" id=\"".concat(y.id, "\"><p id=\"").concat(y.id, "\" data-done=\"").concat(y.done, "\" class=\"todo__item\">").concat(y.text, "</p><i id=\"").concat(y.id, "\" class='bx bx-trash'></i></div>");
+  });
+  for (var _i = 0, _a = todo === null || todo === void 0 ? void 0 : todo.children; _i < _a.length; _i++) {
+    var k = _a[_i];
+    k.addEventListener('click', function (e) {
+      store.dispatch({
+        type: 'SET_TODO',
+        payload: Number(e.target.id)
+      });
+    });
+  }
+  var todoDelete = document.querySelectorAll('.bx-trash');
+  var _loop_1 = function _loop_1(k) {
+    k.addEventListener('click', function (e) {
+      store.dispatch({
+        type: 'REMOVE_TODO',
+        payload: Number(k.id)
+      });
+    });
+  };
+  for (var _b = 0, todoDelete_1 = todoDelete; _b < todoDelete_1.length; _b++) {
+    var k = todoDelete_1[_b];
+    _loop_1(k);
   }
 }
+updateTodo();
+store.subscribe(updateTodo);
+// store.dispatch({
+//     type: 'REMOVE_TODO',
+//     payload: 0
+// })
+var storage = store.getState();
+// console.log(storage.find(todo => todo.id === 0).done = false )
+console.log(store.getState());
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nikita',
+//         done: false,
+//         id: 3
+//     }
+// })
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nibakita',
+//         done: false,
+//         id: 4
+//     }
+// })
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nissta',
+//         done: false,
+//         id: 5
+//     }
+// })
+var buttonAddTodo = document.querySelector('.add');
+buttonAddTodo === null || buttonAddTodo === void 0 ? void 0 : buttonAddTodo.addEventListener('click', function () {
+  var input = document.querySelector('.input');
+  if ((input === null || input === void 0 ? void 0 : input.value) !== '') {
+    store.dispatch({
+      type: "ADD_TODO",
+      payload: {
+        text: input === null || input === void 0 ? void 0 : input.value,
+        done: false,
+        id: store.getState().length
+      }
+    });
+    input.value = "";
+  }
+});
 // console.log(store.getState())
 // store.dispatch({
 //     type: 'SET_TODO',

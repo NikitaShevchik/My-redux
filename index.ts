@@ -23,6 +23,9 @@ const todoState: Todo[] = [
     }
 ]
 
+
+// console.log(todoState.find(todo => todo.id === 0).done)
+
 enum todoActionTypes {
     ADD_TODO = 'ADD_TODO',
     REMOVE_TODO = 'REMOVE_TODO',
@@ -36,9 +39,19 @@ function todoReducer(state: [], action: { type: string, payload?: any }) {
             state.push(action.payload);
             return state
         case 'REMOVE_TODO':
-            return state = state.filter(todo => action.payload.id !== todo.id)
-        case 'SET_TODO'
+            return state = state.filter(todo => action.payload !== todo.id)
+        case 'SET_TODO':
+            // let idState = state.find(todo => todo.id === action.payload).id
+            // return state.find((todo => todo.id === action.payload).text)
+
             state[action.payload].done = !state[action.payload].done;
+
+            // let newState = state;
+            // let doneif = newState.find(todo => todo.id === action.payload).text
+            // let doneif = newState.find(todo => todo.id === action.payload).done
+            // state[action.payload].done = false
+            // console.log(doneif)
+
             return state
         default:
             return action
@@ -46,32 +59,91 @@ function todoReducer(state: [], action: { type: string, payload?: any }) {
 }
 
 const store = createStore(todoReducer, todoState)
-
 // console.log(todoState)
-
-console.log(store.getState())
-
-
-store.dispatch({
-    type: 'ADD_TODO',
-    payload: {
-        text: 'Nikita',
-        done: false,
-        id: 3
-    }
-})
-
+// console.log(store.getState())
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nikita',
+//         done: false,
+//         id: 3
+//     }
+// })
 const todo = document.querySelector('.todo');
-let storage = store.getState();
-storage.map(y => todo?.innerHTML += `<p id="${y.id}" data-done="${y.done}">${y.text}</p>`)
 
 // console.log(todo?.children)
-for (let k of todo?.children) {
-    if (k.dataset.done === 'true') {
-        k.classList.toggle('_done')
+function updateTodo() {
+    let storage = store.getState();
+    todo?.innerHTML = ''
+    storage.map(y => todo?.innerHTML += `<div class="todo__element" id="${y.id}"><p id="${y.id}" data-done="${y.done}" class="todo__item">${y.text}</p><i id="${y.id}" class='bx bx-trash'></i></div>`)
+    for (let k of todo?.children) {
+        k.addEventListener('click', (e) => {
+            store.dispatch({
+                type: 'SET_TODO',
+                payload: Number(e.target.id)
+            })
+        })
+    }
+    let todoDelete = document.querySelectorAll('.bx-trash');
+    for (let k of todoDelete) {
+        k.addEventListener('click', (e) => {
+            store.dispatch({
+                type: 'REMOVE_TODO',
+                payload: Number(k.id)
+            })
+        })
     }
 }
+updateTodo()
+store.subscribe(updateTodo)
 
+// store.dispatch({
+//     type: 'REMOVE_TODO',
+//     payload: 0
+// })
+let storage = store.getState();
+// console.log(storage.find(todo => todo.id === 0).done = false )
+console.log(store.getState())
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nikita',
+//         done: false,
+//         id: 3
+//     }
+// })
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nibakita',
+//         done: false,
+//         id: 4
+//     }
+// })
+// store.dispatch({
+//     type: 'ADD_TODO',
+//     payload: {
+//         text: 'Nissta',
+//         done: false,
+//         id: 5
+//     }
+// })
+
+const buttonAddTodo = document.querySelector('.add');
+buttonAddTodo?.addEventListener('click', () => {
+    let input = document.querySelector('.input');
+    if (input?.value !== '') {
+        store.dispatch({
+            type: "ADD_TODO",
+            payload: {
+                text: input?.value,
+                done: false,
+                id: store.getState().length
+            }
+        })
+        input.value = "";
+    }
+})
 
 
 
