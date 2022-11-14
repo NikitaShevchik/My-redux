@@ -145,6 +145,18 @@ exports.createStore = createStore;
 },{}],"index.ts":[function(require,module,exports) {
 "use strict";
 
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -179,15 +191,13 @@ function todoReducer(state, action) {
         return action.payload !== todo.id;
       });
     case 'SET_TODO':
-      // let idState = state.find(todo => todo.id === action.payload).id
-      // return state.find((todo => todo.id === action.payload).text)
-      state[action.payload].done = !state[action.payload].done;
-      // let newState = state;
-      // let doneif = newState.find(todo => todo.id === action.payload).text
-      // let doneif = newState.find(todo => todo.id === action.payload).done
-      // state[action.payload].done = false
-      // console.log(doneif)
-      return state;
+      var newState = state.map(function (todo) {
+        return todo.id === action.payload ? __assign(__assign({}, todo), {
+          done: !todo.done
+        }) : todo;
+      });
+      // state[action.payload].done = !state[action.payload].done;
+      return newState;
     default:
       return action;
   }
@@ -211,17 +221,21 @@ function updateTodo() {
   storage.map(function (y) {
     return todo === null || todo === void 0 ? void 0 : todo.innerHTML += "<div class=\"todo__element\" id=\"".concat(y.id, "\"><p id=\"").concat(y.id, "\" data-done=\"").concat(y.done, "\" class=\"todo__item\">").concat(y.text, "</p><i id=\"").concat(y.id, "\" class='bx bx-trash'></i></div>");
   });
-  for (var _i = 0, _a = todo === null || todo === void 0 ? void 0 : todo.children; _i < _a.length; _i++) {
-    var k = _a[_i];
-    k.addEventListener('click', function (e) {
+  var todosText = document.querySelectorAll('.todo__item');
+  var _loop_1 = function _loop_1(k) {
+    k.addEventListener('click', function () {
       store.dispatch({
         type: 'SET_TODO',
-        payload: Number(e.target.id)
+        payload: Number(k.id)
       });
     });
+  };
+  for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
+    var k = todosText_1[_i];
+    _loop_1(k);
   }
   var todoDelete = document.querySelectorAll('.bx-trash');
-  var _loop_1 = function _loop_1(k) {
+  var _loop_2 = function _loop_2(k) {
     k.addEventListener('click', function (e) {
       store.dispatch({
         type: 'REMOVE_TODO',
@@ -229,9 +243,9 @@ function updateTodo() {
       });
     });
   };
-  for (var _b = 0, todoDelete_1 = todoDelete; _b < todoDelete_1.length; _b++) {
-    var k = todoDelete_1[_b];
-    _loop_1(k);
+  for (var _a = 0, todoDelete_1 = todoDelete; _a < todoDelete_1.length; _a++) {
+    var k = todoDelete_1[_a];
+    _loop_2(k);
   }
 }
 updateTodo();

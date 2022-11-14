@@ -1,8 +1,8 @@
 import { createStore } from "./redux/store"
 
 interface Todo {
-    text: string;
-    done: boolean;
+    text?: string;
+    done?: boolean;
     id: number;
 }
 const todoState: Todo[] = [
@@ -33,7 +33,7 @@ enum todoActionTypes {
 }
 
 
-function todoReducer(state: [], action: { type: string, payload?: any }) {
+function todoReducer(state: [], action: { type: string, payload?: Todo[] | number }) {
     switch (action.type) {
         case 'ADD_TODO':
             state.push(action.payload);
@@ -41,18 +41,16 @@ function todoReducer(state: [], action: { type: string, payload?: any }) {
         case 'REMOVE_TODO':
             return state = state.filter(todo => action.payload !== todo.id)
         case 'SET_TODO':
-            // let idState = state.find(todo => todo.id === action.payload).id
-            // return state.find((todo => todo.id === action.payload).text)
 
-            state[action.payload].done = !state[action.payload].done;
+            const newState = state.map((todo) => (
+                todo.id === action.payload
+                    ? { ...todo, done: !todo.done }
+                    : todo
+            ));
 
-            // let newState = state;
-            // let doneif = newState.find(todo => todo.id === action.payload).text
-            // let doneif = newState.find(todo => todo.id === action.payload).done
-            // state[action.payload].done = false
-            // console.log(doneif)
 
-            return state
+            // state[action.payload].done = !state[action.payload].done;
+            return newState
         default:
             return action
     }
@@ -74,13 +72,14 @@ const todo = document.querySelector('.todo');
 // console.log(todo?.children)
 function updateTodo() {
     let storage = store.getState();
-    todo?.innerHTML = ''
+    todo?.innerHTML = '';
     storage.map(y => todo?.innerHTML += `<div class="todo__element" id="${y.id}"><p id="${y.id}" data-done="${y.done}" class="todo__item">${y.text}</p><i id="${y.id}" class='bx bx-trash'></i></div>`)
-    for (let k of todo?.children) {
-        k.addEventListener('click', (e) => {
+    const todosText = document.querySelectorAll('.todo__item');
+    for (let k of todosText) {
+        k.addEventListener('click', () => {
             store.dispatch({
                 type: 'SET_TODO',
-                payload: Number(e.target.id)
+                payload: Number(k.id)
             })
         })
     }
@@ -131,7 +130,7 @@ console.log(store.getState())
 
 const buttonAddTodo = document.querySelector('.add');
 buttonAddTodo?.addEventListener('click', () => {
-    let input = document.querySelector('.input');
+    let input = document.querySelector('.input') as HTMLInputElement;
     if (input?.value !== '') {
         store.dispatch({
             type: "ADD_TODO",
