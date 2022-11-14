@@ -1,6 +1,6 @@
 export function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
     let state = initialState;
-    let subscribing;
+    let subscribing: () => void;
     return {
         getState: () => state,
         dispatch(action: {
@@ -11,7 +11,7 @@ export function createStore<T>(reducer: (state: T, action: { type: string; paylo
             subscribing();
             return action;
         },
-        subscribe(subscrib) {
+        subscribe(subscrib: () => void) {
             subscribing = subscrib;
         }
     }
