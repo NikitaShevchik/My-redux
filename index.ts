@@ -144,6 +144,11 @@ buttonAddTodo?.addEventListener('click', () => {
     }
 })
 
+const showState = document.querySelector('.state');
+showState?.addEventListener('click', () => {
+    const state = store.getState();
+    console.log(state)
+})
 
 
 // console.log(store.getState())

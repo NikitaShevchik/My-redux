@@ -142,6 +142,21 @@ function createStore(reducer, initialState) {
   };
 }
 exports.createStore = createStore;
+// const mamba = (state, action) => {
+//     switch (action.type) {
+//         case 'first':
+//             return state = state + 10;
+//         case 'second':
+//             return state = state + 100;
+//         default:
+//             return state
+//     }
+// }
+// const store = createStore(mamba, 1000);
+// store.dispatch({
+//     type: 'first'
+// })
+// console.log(store.getState())
 },{}],"index.ts":[function(require,module,exports) {
 "use strict";
 
@@ -296,6 +311,11 @@ buttonAddTodo === null || buttonAddTodo === void 0 ? void 0 : buttonAddTodo.addE
     input.value = "";
   }
 });
+var showState = document.querySelector('.state');
+showState === null || showState === void 0 ? void 0 : showState.addEventListener('click', function () {
+  var state = store.getState();
+  console.log(state);
+});
 // console.log(store.getState())
 // store.dispatch({
 //     type: 'SET_TODO',
@@ -442,7 +462,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59741" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64359" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

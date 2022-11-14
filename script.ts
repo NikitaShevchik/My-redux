@@ -11,92 +11,92 @@
 //     complete: boolean
 // }
 
-function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
-    let state = initialState;
-    let subscribing;
-    function dispatch(action: {
-        type: string;
-        payload?: Partial<T>
-    }) {
-        reducer(state, action);
-    }
-    return {
-        getState: () => state,
-        // dispatch(action) {
-        //     state = reducer(state, action);
-        //     subscribing()
-        //     return action;
-        // },
-        subscribe(subscrib) {
-            subscribing = subscrib;
-        }
-    }
-}
+// function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
+//     let state = initialState;
+//     let subscribing;
+//     function dispatch(action: {
+//         type: string;
+//         payload?: Partial<T>
+//     }) {
+//         reducer(state, action);
+//     }
+//     return {
+//         getState: () => state,
+//         // dispatch(action) {
+//         //     state = reducer(state, action);
+//         //     subscribing()
+//         //     return action;
+//         // },
+//         subscribe(subscrib) {
+//             subscribing = subscrib;
+//         }
+//     }
+// }
 
 
-interface User {
-    name: string;
-    age: number;
-}
+// interface User {
+//     name: string;
+//     age: number;
+// }
 
-interface State<T> {
-    loading: boolean;
-    error: Error | null;
-    data: T
-}
+// interface State<T> {
+//     loading: boolean;
+//     error: Error | null;
+//     data: T
+// }
 
-interface Message {
-    id: number;
-    text: string;
-}
+// interface Message {
+//     id: number;
+//     text: string;
+// }
 
-type UserState = State<User>;
-type MessageState = State<Message>
+// type UserState = State<User>;
+// type MessageState = State<Message>
 
-const messageState: MessageState = {
-    loading: true,
-    error: null,
-    data: {
-        id: 1,
-        text: 'Text'
-    }
-}
-
-
-
-function identity<T>(arg: T): T { // функция работает с типом Т и принимает тип Т
-    return arg
-}
-const s: string = 'Hello';
-const n: number = 555;
-const user: User = {
-    name: 'Max',
-    age: 22
-}
-
-const r1 = identity(s)
-const r2 = identity(n)
-const r3 = identity(user)
+// const messageState: MessageState = {
+//     loading: true,
+//     error: null,
+//     data: {
+//         id: 1,
+//         text: 'Text'
+//     }
+// }
 
 
 
+// function identity<T>(arg: T): T { // функция работает с типом Т и принимает тип Т
+//     return arg
+// }
+// const s: string = 'Hello';
+// const n: number = 555;
+// const user: User = {
+//     name: 'Max',
+//     age: 22
+// }
 
-interface CreateStore {
-    reducer: any;
-    initialState: string;
-}
+// const r1 = identity(s)
+// const r2 = identity(n)
+// const r3 = identity(user)
 
 
-function createStore2(reducer, initialState) {
-    let state = initialState;
-    return {
-        getState: () => state,
-        dispatch(action) {
-            state = reducer(state, action);
-            return action;
-        }
-    }
-}
+
+
+// interface CreateStore {
+//     reducer: any;
+//     initialState: string;
+// }
+
+
+// function createStore2(reducer, initialState) {
+//     let state = initialState;
+//     return {
+//         getState: () => state,
+//         dispatch(action) {
+//             state = reducer(state, action);
+//             return action;
+//         }
+//     }
+// }
 
 
 // enum UserActionTypes {

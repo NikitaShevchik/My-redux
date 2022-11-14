@@ -16,3 +16,21 @@ export function createStore<T>(reducer: (state: T, action: { type: string; paylo
         }
     }
 }
+
+// const mamba = (state, action) => {
+//     switch (action.type) {
+//         case 'first':
+//             return state = state + 10;
+//         case 'second':
+//             return state = state + 100;
+//         default:
+//             return state
+//     }
+// }
+
+// const store = createStore(mamba, 1000);
+
+// store.dispatch({
+//     type: 'first'
+// })
+// console.log(store.getState())
