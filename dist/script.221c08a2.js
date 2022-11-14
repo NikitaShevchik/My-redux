@@ -130,15 +130,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 //     id: number,
 //     complete: boolean
 // }
-var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
-  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-    if (ar || !(i in from)) {
-      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-      ar[i] = from[i];
-    }
-  }
-  return to.concat(ar || Array.prototype.slice.call(from));
-};
 function createStore(reducer, initialState) {
   var state = initialState;
   var subscribing;
@@ -159,61 +150,216 @@ function createStore(reducer, initialState) {
     }
   };
 }
-var store = createStore(counterLogic, 0);
-var root = document.querySelector('#root');
-store.subscribe(function () {
-  return root.innerHTML = store.getState();
-});
-function counterLogic(state, action) {
-  switch (action.type) {
-    case 'addOne':
-      return state = state + 1;
-    case 'minOne':
-      return state = state - 1;
-    default:
-      return state;
+var messageState = {
+  loading: true,
+  error: null,
+  data: {
+    id: 1,
+    text: 'Text'
   }
+};
+function identity(arg) {
+  return arg;
 }
-var buttonPlus = document.querySelector('.plus');
-var buttonMinus = document.querySelector('.minus');
-buttonPlus === null || buttonPlus === void 0 ? void 0 : buttonPlus.addEventListener('click', function () {
-  store.dispatch({
-    type: 'addOne'
-  });
-});
-buttonMinus === null || buttonMinus === void 0 ? void 0 : buttonMinus.addEventListener('click', function () {
-  store.dispatch({
-    type: 'minOne'
-  });
-});
-function todoLogic(state, action) {
-  switch (action.type) {
-    case 'pushName':
-      return state = __spreadArray(__spreadArray([], state, true), [action.name], false);
-    default:
+var s = 'Hello';
+var n = 555;
+var user = {
+  name: 'Max',
+  age: 22
+};
+var r1 = identity(s);
+var r2 = identity(n);
+var r3 = identity(user);
+function createStore2(reducer, initialState) {
+  var state = initialState;
+  return {
+    getState: function getState() {
       return state;
-  }
+    },
+    dispatch: function dispatch(action) {
+      state = reducer(state, action);
+      return action;
+    }
+  };
 }
-var storePush = createStore(todoLogic, []);
-storePush.subscribe(function () {
-  return console.log(storePush.getState());
-});
-storePush.dispatch({
-  type: 'pushName',
-  name: 'Alex'
-});
-storePush.dispatch({
-  type: 'pushName',
-  name: 'Andrew'
-});
-storePush.dispatch({
-  type: 'pushName',
-  name: 'Jeje'
-});
-storePush.dispatch({
-  type: 'pushName',
-  name: 'Comput'
-});
+// enum UserActionTypes {
+//     FETCH_USERS = 'FETCH_USERS',
+//     FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS',
+//     FETCH_USERS_ERROR = 'FETCH_USERS_ERROR'
+// }
+// interface FetchUserAction {
+//     type: UserActionTypes.FETCH_USERS;
+// }
+// interface FetchUserSuccessAction {
+//     type: UserActionTypes.FETCH_USERS_SUCCESS;
+//     payload: any[]
+// }
+// interface FetchUserErrorAction {
+//     type: UserActionTypes.FETCH_USERS_ERROR;
+//     payload: string
+// }
+// interface UserState {
+//     users: any[];
+//     loading: boolean;
+//     error: null | string;
+// }
+// const initialState: UserState = {
+//     users: [],
+//     loading: false,
+//     error: null
+// }
+// type UserAction = FetchUserAction | FetchUserErrorAction | FetchUserSuccessAction
+// export const userReducer = (state = initialState, action: UserAction): UserState | undefined => {
+//     switch (action.type) {
+//         case UserActionTypes.FETCH_USERS:
+//             return { users: [], loading: true, error: null }
+//         case UserActionTypes.FETCH_USERS_SUCCESS:
+//             return { users: action.payload, loading: false, error: null }
+//         case UserActionTypes.FETCH_USERS_ERROR:
+//             return { users: [], loading: false, error: action.payload }
+//         default:
+//             return state
+//     }
+// }
+// const store = createStore(counterLogic, 0);
+// const root = document.querySelector('#root') as any | null;
+// store.subscribe(() => root.innerHTML = store.getState())
+// function counterLogic(state, action) {
+//     switch (action.type) {
+//         case 'addOne':
+//             return state = state + 1;
+//         case 'minOne':
+//             return state = state - 1;
+//         default:
+//             return state;
+//     }
+// }
+// const buttonPlus = document.querySelector('.plus') as HTMLButtonElement | null;
+// const buttonMinus = document.querySelector('.minus') as HTMLButtonElement | null;
+// buttonPlus?.addEventListener('click', () => {
+//     store.dispatch({
+//         type: 'addOne'
+//     })
+// })
+// buttonMinus?.addEventListener('click', () => {
+//     store.dispatch({
+//         type: 'minOne'
+//     })
+// })
+// function todoLogic(state, action) {
+//     switch (action.type) {
+//         case 'pushName':
+//             return state = [...state, action.name];
+//         default:
+//             return state;
+//     }
+// }
+// const storePush = createStore(todoLogic, []);
+// storePush.subscribe(() => console.log(storePush.getState()))
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Alex'
+// })
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Andrew',
+// })
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Jeje'
+// })
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Comput'
+// })
+// interface createStore {
+//     state: string;
+// }
+// interface action {
+//     type: string;
+//     name?: string;
+// }
+// interface arrayTodo {
+//     name: string,
+//     id: number,
+//     complete: boolean
+// }
+// function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
+//     let state = initialState;
+//     let subscribing;
+//     function dispatch(action: {
+//         type: string;
+//         payload?: Partial<T>
+//     }) {
+//         reducer(state, action);
+//     }
+//     return {
+//         getState: () => state,
+//         dispatch(action) {
+//             state = reducer(state, action);
+//             subscribing()
+//             return action;
+//         },
+//         subscribe(subscrib) {
+//             subscribing = subscrib;
+//         }
+//     }
+// }
+// interface UserAction {
+//     type: string;
+//     payload?: any;
+// }
+// const store = createStore(counterLogic, 0);
+// const root = document.querySelector('#root') as any | null;
+// store.subscribe(() => root.innerHTML = store.getState())
+// function counterLogic(state, action) {
+//     switch (action.type) {
+//         case 'addOne':
+//             return state = state + 1;
+//         case 'minOne':
+//             return state = state - 1;
+//         default:
+//             return state;
+//     }
+// }
+// const buttonPlus = document.querySelector('.plus') as HTMLButtonElement | null;
+// const buttonMinus = document.querySelector('.minus') as HTMLButtonElement | null;
+// buttonPlus?.addEventListener('click', () => {
+//     store.dispatch({
+//         type: 'addOne'
+//     })
+// })
+// buttonMinus?.addEventListener('click', () => {
+//     store.dispatch({
+//         type: 'minOne'
+//     })
+// })
+// function todoLogic(state, action) {
+//     switch (action.type) {
+//         case 'pushName':
+//             return state = [...state, action.name];
+//         default:
+//             return state;
+//     }
+// }
+// const storePush = createStore(todoLogic, []);
+// storePush.subscribe(() => console.log(storePush.getState()))
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Alex'
+// })
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Andrew',
+// })
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Jeje'
+// })
+// storePush.dispatch({
+//     type: 'pushName',
+//     name: 'Comput'
+// })
 },{}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -239,7 +385,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57886" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51131" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

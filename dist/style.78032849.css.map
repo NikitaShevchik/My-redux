@@ -1,0 +1,1 @@
+{"version":3,"sources":["css/style.css"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA","file":"style.78032849.css","sourceRoot":"..","sourcesContent":[".wrapper {\n  max-width: 600px;\n}\n\n.first {\n  background-color: #e3e3e3;\n  padding: 20px;\n}\n\n._done {\n  text-decoration: line-through;\n}"]}

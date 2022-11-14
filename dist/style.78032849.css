@@ -1,0 +1,14 @@
+.wrapper {
+  max-width: 600px;
+}
+
+.first {
+  background-color: #e3e3e3;
+  padding: 20px;
+}
+
+._done {
+  text-decoration: line-through;
+}
+
+/*# sourceMappingURL=/style.78032849.css.map */
