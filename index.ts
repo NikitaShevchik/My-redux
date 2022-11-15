@@ -1,18 +1,11 @@
 import { createStore } from "./redux/store"
 import { nanoid } from 'nanoid'
+import { IAction, ITodo } from "./types/types"
 
 function id() {
     return nanoid()
 }
-interface ITodo {
-    text?: string,
-    done?: boolean,
-    id?: string
-}
-interface IAction<T> {
-    type: string,
-    payload?: Partial<T>
-}
+
 const todoState: ITodo[] = [
     {
         text: 'Do homework',
@@ -37,20 +30,19 @@ enum todoActionTypes {
     SET_TODO = 'SET_TODO'
 }
 
-
 function todoReducer(state: ITodo[], action: IAction<ITodo>) {
     switch (action.type) {
-        case 'ADD_TODO':
+        case todoActionTypes.ADD_TODO:
             state.push({
                 ...action.payload,
                 done: false,
                 id: id(),
             });
             return state
-        case 'REMOVE_TODO':
+        case todoActionTypes.REMOVE_TODO:
             const filterState = state.filter(todo => action.payload?.id !== todo.id)
             return filterState
-        case 'SET_TODO':
+        case todoActionTypes.SET_TODO:
             const newState = state.map((todo) => (
                 todo.id === action.payload?.id
                     ? { ...todo, done: !todo.done }
@@ -69,24 +61,23 @@ const todo = document.querySelector('.todo') as HTMLElement;
 function updateTodo() {
     let storage = store.getState();
     todo.innerHTML = '';
-    storage.map(y => todo.innerHTML += `<div class="todo__element" ><p id="${y.id}" data-done="${y.done}" class="todo__item">${y.text}</p><i id="${y.id}" class='bx bx-trash'></i></div>`)
+    storage.map(item => todo.innerHTML += `<div class="todo__element" ><p id="${item.id}" data-done="${item.done}" class="todo__item">${item.text}</p><i id="${item.id}" class='bx bx-trash'></i></div>`)
     const todosText = document.querySelectorAll('.todo__item');
-    for (let k of todosText) {
-        k.addEventListener('click', (e) => {
-            // let idK: string = String(k.id);
+    for (let todosTextContent of todosText) {
+        todosTextContent.addEventListener('click', () => {
             store.dispatch({
-                type: 'SET_TODO',
+                type: todoActionTypes.SET_TODO,
                 payload: {
-                    id: k.id
+                    id: todosTextContent.id
                 }
             })
         })
     }
     let todoDelete = document.querySelectorAll('.bx-trash');
     for (let k of todoDelete) {
-        k.addEventListener('click', (e) => {
+        k.addEventListener('click', () => {
             store.dispatch({
-                type: 'REMOVE_TODO',
+                type: todoActionTypes.REMOVE_TODO,
                 payload: {
                     id: k.id
                 }
@@ -103,7 +94,7 @@ buttonAddTodo?.addEventListener('click', () => {
     if (input.value !== '') {
         const value: string = String(input.value);
         store.dispatch({
-            type: "ADD_TODO",
+            type: todoActionTypes.ADD_TODO,
             payload: {
                 text: value
             }
@@ -117,10 +108,6 @@ showState?.addEventListener('click', () => {
     const state = store.getState();
     console.log(state)
 })
-
-
-
-
 
 
 // function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {

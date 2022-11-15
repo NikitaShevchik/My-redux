@@ -1,8 +1,6 @@
-interface ITodo {
-    text?: string,
-    done?: boolean,
-    id?: string
-}
+import { ITodo } from "../types/types";
+
+
 
 export function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<ITodo> }) => T, initialState: T) {
     let state = initialState;

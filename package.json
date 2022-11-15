@@ -4,6 +4,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "nanoid": "^4.0.0"
+    "nanoid": "^4.0.0",
+    "types": "^0.1.1"
   }
 }

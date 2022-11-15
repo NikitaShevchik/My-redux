@@ -252,19 +252,19 @@ var todoActionTypes;
 })(todoActionTypes || (todoActionTypes = {}));
 function todoReducer(state, action) {
   switch (action.type) {
-    case 'ADD_TODO':
+    case todoActionTypes.ADD_TODO:
       state.push(__assign(__assign({}, action.payload), {
         done: false,
         id: id()
       }));
       return state;
-    case 'REMOVE_TODO':
+    case todoActionTypes.REMOVE_TODO:
       var filterState = state.filter(function (todo) {
         var _a;
         return ((_a = action.payload) === null || _a === void 0 ? void 0 : _a.id) !== todo.id;
       });
       return filterState;
-    case 'SET_TODO':
+    case todoActionTypes.SET_TODO:
       var newState = state.map(function (todo) {
         var _a;
         return todo.id === ((_a = action.payload) === null || _a === void 0 ? void 0 : _a.id) ? __assign(__assign({}, todo), {
@@ -281,30 +281,29 @@ var todo = document.querySelector('.todo');
 function updateTodo() {
   var storage = store.getState();
   todo.innerHTML = '';
-  storage.map(function (y) {
-    return todo.innerHTML += "<div class=\"todo__element\" ><p id=\"".concat(y.id, "\" data-done=\"").concat(y.done, "\" class=\"todo__item\">").concat(y.text, "</p><i id=\"").concat(y.id, "\" class='bx bx-trash'></i></div>");
+  storage.map(function (item) {
+    return todo.innerHTML += "<div class=\"todo__element\" ><p id=\"".concat(item.id, "\" data-done=\"").concat(item.done, "\" class=\"todo__item\">").concat(item.text, "</p><i id=\"").concat(item.id, "\" class='bx bx-trash'></i></div>");
   });
   var todosText = document.querySelectorAll('.todo__item');
-  var _loop_1 = function _loop_1(k) {
-    k.addEventListener('click', function (e) {
-      // let idK: string = String(k.id);
+  var _loop_1 = function _loop_1(todosTextContent) {
+    todosTextContent.addEventListener('click', function () {
       store.dispatch({
-        type: 'SET_TODO',
+        type: todoActionTypes.SET_TODO,
         payload: {
-          id: k.id
+          id: todosTextContent.id
         }
       });
     });
   };
   for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
-    var k = todosText_1[_i];
-    _loop_1(k);
+    var todosTextContent = todosText_1[_i];
+    _loop_1(todosTextContent);
   }
   var todoDelete = document.querySelectorAll('.bx-trash');
   var _loop_2 = function _loop_2(k) {
-    k.addEventListener('click', function (e) {
+    k.addEventListener('click', function () {
       store.dispatch({
-        type: 'REMOVE_TODO',
+        type: todoActionTypes.REMOVE_TODO,
         payload: {
           id: k.id
         }
@@ -324,7 +323,7 @@ buttonAddTodo === null || buttonAddTodo === void 0 ? void 0 : buttonAddTodo.addE
   if (input.value !== '') {
     var value = String(input.value);
     store.dispatch({
-      type: "ADD_TODO",
+      type: todoActionTypes.ADD_TODO,
       payload: {
         text: value
       }
