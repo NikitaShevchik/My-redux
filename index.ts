@@ -1,30 +1,35 @@
 import { createStore } from "./redux/store"
+import { nanoid } from 'nanoid'
 
-interface Todo {
-    text?: string;
-    done?: boolean;
-    id: number;
+function id() {
+    return nanoid()
 }
-const todoState: Todo[] = [
+interface ITodo {
+    text?: string,
+    done?: boolean,
+    id?: string
+}
+interface IAction<T> {
+    type: string;
+    payload?: Partial<T>;
+}
+const todoState: ITodo[] = [
     {
         text: 'Do homework',
-        done: true,
-        id: 0
+        done: false,
+        id: id()
     },
     {
         text: 'Make coffee',
         done: false,
-        id: 1
+        id: id()
     },
     {
         text: 'Make popop',
-        done: true,
-        id: 2
+        done: false,
+        id: id()
     }
 ]
-
-
-// console.log(todoState.find(todo => todo.id === 0).done)
 
 enum todoActionTypes {
     ADD_TODO = 'ADD_TODO',
@@ -33,53 +38,47 @@ enum todoActionTypes {
 }
 
 
-function todoReducer(state: [], action: { type: string, payload?: Todo[] | number }) {
+function todoReducer(state: ITodo[], action: IAction<ITodo>) {
     switch (action.type) {
         case 'ADD_TODO':
-            state.push(action.payload);
+            state.push({
+                ...action.payload,
+                done: false,
+                id: id(),
+            });
             return state
         case 'REMOVE_TODO':
-            return state = state.filter(todo => action.payload !== todo.id)
+            const filterState = state.filter(todo => action.payload?.id !== todo.id)
+            return filterState
         case 'SET_TODO':
-
             const newState = state.map((todo) => (
-                todo.id === action.payload
+                todo.id === action.payload?.id
                     ? { ...todo, done: !todo.done }
                     : todo
             ));
-
-
-            // state[action.payload].done = !state[action.payload].done;
             return newState
         default:
-            return action
+            return state
     }
 }
 
 const store = createStore(todoReducer, todoState)
-// console.log(todoState)
-// console.log(store.getState())
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nikita',
-//         done: false,
-//         id: 3
-//     }
-// })
-const todo = document.querySelector('.todo');
 
-// console.log(todo?.children)
+const todo = document.querySelector('.todo') as HTMLElement;
+
 function updateTodo() {
     let storage = store.getState();
-    todo?.innerHTML = '';
-    storage.map(y => todo?.innerHTML += `<div class="todo__element" id="${y.id}"><p id="${y.id}" data-done="${y.done}" class="todo__item">${y.text}</p><i id="${y.id}" class='bx bx-trash'></i></div>`)
+    todo.innerHTML = '';
+    storage.map(y => todo.innerHTML += `<div class="todo__element" ><p id="${y.id}" data-done="${y.done}" class="todo__item">${y.text}</p><i id="${y.id}" class='bx bx-trash'></i></div>`)
     const todosText = document.querySelectorAll('.todo__item');
     for (let k of todosText) {
-        k.addEventListener('click', () => {
+        k.addEventListener('click', (e) => {
+            // let idK: string = String(k.id);
             store.dispatch({
                 type: 'SET_TODO',
-                payload: Number(k.id)
+                payload: {
+                    id: e.target.id
+                }
             })
         })
     }
@@ -88,7 +87,9 @@ function updateTodo() {
         k.addEventListener('click', (e) => {
             store.dispatch({
                 type: 'REMOVE_TODO',
-                payload: Number(k.id)
+                payload: {
+                    id: k.id
+                }
             })
         })
     }
@@ -96,48 +97,15 @@ function updateTodo() {
 updateTodo()
 store.subscribe(updateTodo)
 
-// store.dispatch({
-//     type: 'REMOVE_TODO',
-//     payload: 0
-// })
-let storage = store.getState();
-// console.log(storage.find(todo => todo.id === 0).done = false )
-console.log(store.getState())
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nikita',
-//         done: false,
-//         id: 3
-//     }
-// })
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nibakita',
-//         done: false,
-//         id: 4
-//     }
-// })
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nissta',
-//         done: false,
-//         id: 5
-//     }
-// })
-
 const buttonAddTodo = document.querySelector('.add');
 buttonAddTodo?.addEventListener('click', () => {
     let input = document.querySelector('.input') as HTMLInputElement;
-    if (input?.value !== '') {
+    if (input.value !== '') {
+        const value: string = String(input.value);
         store.dispatch({
             type: "ADD_TODO",
             payload: {
-                text: input?.value,
-                done: false,
-                id: store.getState().length
+                text: value
             }
         })
         input.value = "";
@@ -149,56 +117,6 @@ showState?.addEventListener('click', () => {
     const state = store.getState();
     console.log(state)
 })
-
-
-// console.log(store.getState())
-// store.dispatch({
-//     type: 'SET_TODO',
-//     payload: '0'
-// })
-
-// store.dispatch({
-//     type: 'REMOVE_TODO',
-//     payload: {
-//         text: 'Nikita',
-//         done: false,
-//         id: 3
-//     }
-// })
-
-
-
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Aleryt',
-//         done: false,
-//         id: 3
-//     }
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

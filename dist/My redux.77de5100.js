@@ -142,22 +142,73 @@ function createStore(reducer, initialState) {
   };
 }
 exports.createStore = createStore;
-// const mamba = (state, action) => {
-//     switch (action.type) {
-//         case 'first':
-//             return state = state + 10;
-//         case 'second':
-//             return state = state + 100;
-//         default:
-//             return state
-//     }
-// }
-// const store = createStore(mamba, 1000);
-// store.dispatch({
-//     type: 'first'
-// })
-// console.log(store.getState())
-},{}],"index.ts":[function(require,module,exports) {
+},{}],"node_modules/nanoid/url-alphabet/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.urlAlphabet = void 0;
+var urlAlphabet = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict';
+exports.urlAlphabet = urlAlphabet;
+},{}],"node_modules/nanoid/index.browser.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.random = exports.nanoid = exports.customRandom = exports.customAlphabet = void 0;
+Object.defineProperty(exports, "urlAlphabet", {
+  enumerable: true,
+  get: function () {
+    return _index.urlAlphabet;
+  }
+});
+var _index = require("./url-alphabet/index.js");
+var random = function random(bytes) {
+  return crypto.getRandomValues(new Uint8Array(bytes));
+};
+exports.random = random;
+var customRandom = function customRandom(alphabet, defaultSize, getRandom) {
+  var mask = (2 << Math.log(alphabet.length - 1) / Math.LN2) - 1;
+  var step = -~(1.6 * mask * defaultSize / alphabet.length);
+  return function () {
+    var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultSize;
+    var id = '';
+    while (true) {
+      var bytes = getRandom(step);
+      var j = step;
+      while (j--) {
+        id += alphabet[bytes[j] & mask] || '';
+        if (id.length === size) return id;
+      }
+    }
+  };
+};
+exports.customRandom = customRandom;
+var customAlphabet = function customAlphabet(alphabet) {
+  var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 21;
+  return customRandom(alphabet, size, random);
+};
+exports.customAlphabet = customAlphabet;
+var nanoid = function nanoid() {
+  var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 21;
+  return crypto.getRandomValues(new Uint8Array(size)).reduce(function (id, byte) {
+    byte &= 63;
+    if (byte < 36) {
+      id += byte.toString(36);
+    } else if (byte < 62) {
+      id += (byte - 26).toString(36).toUpperCase();
+    } else if (byte > 62) {
+      id += '-';
+    } else {
+      id += '_';
+    }
+    return id;
+  }, '');
+};
+exports.nanoid = nanoid;
+},{"./url-alphabet/index.js":"node_modules/nanoid/url-alphabet/index.js"}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 var __assign = this && this.__assign || function () {
@@ -176,20 +227,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var store_1 = require("./redux/store");
+var nanoid_1 = require("nanoid");
+function id() {
+  return (0, nanoid_1.nanoid)();
+}
 var todoState = [{
   text: 'Do homework',
-  done: true,
-  id: 0
+  done: false,
+  id: id()
 }, {
   text: 'Make coffee',
   done: false,
-  id: 1
+  id: id()
 }, {
   text: 'Make popop',
-  done: true,
-  id: 2
+  done: false,
+  id: id()
 }];
-// console.log(todoState.find(todo => todo.id === 0).done)
 var todoActionTypes;
 (function (todoActionTypes) {
   todoActionTypes["ADD_TODO"] = "ADD_TODO";
@@ -199,113 +253,77 @@ var todoActionTypes;
 function todoReducer(state, action) {
   switch (action.type) {
     case 'ADD_TODO':
-      state.push(action.payload);
+      state.push(__assign(__assign({}, action.payload), {
+        done: false,
+        id: id()
+      }));
       return state;
     case 'REMOVE_TODO':
-      return state = state.filter(function (todo) {
-        return action.payload !== todo.id;
+      var filterState = state.filter(function (todo) {
+        var _a;
+        return ((_a = action.payload) === null || _a === void 0 ? void 0 : _a.id) !== todo.id;
       });
+      return filterState;
     case 'SET_TODO':
       var newState = state.map(function (todo) {
-        return todo.id === action.payload ? __assign(__assign({}, todo), {
+        var _a;
+        return todo.id === ((_a = action.payload) === null || _a === void 0 ? void 0 : _a.id) ? __assign(__assign({}, todo), {
           done: !todo.done
         }) : todo;
       });
-      // state[action.payload].done = !state[action.payload].done;
       return newState;
     default:
-      return action;
+      return state;
   }
 }
 var store = (0, store_1.createStore)(todoReducer, todoState);
-// console.log(todoState)
-// console.log(store.getState())
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nikita',
-//         done: false,
-//         id: 3
-//     }
-// })
 var todo = document.querySelector('.todo');
-// console.log(todo?.children)
 function updateTodo() {
   var storage = store.getState();
-  todo === null || todo === void 0 ? void 0 : todo.innerHTML = '';
+  todo.innerHTML = '';
   storage.map(function (y) {
-    return todo === null || todo === void 0 ? void 0 : todo.innerHTML += "<div class=\"todo__element\" id=\"".concat(y.id, "\"><p id=\"").concat(y.id, "\" data-done=\"").concat(y.done, "\" class=\"todo__item\">").concat(y.text, "</p><i id=\"").concat(y.id, "\" class='bx bx-trash'></i></div>");
+    return todo.innerHTML += "<div class=\"todo__element\" ><p id=\"".concat(y.id, "\" data-done=\"").concat(y.done, "\" class=\"todo__item\">").concat(y.text, "</p><i id=\"").concat(y.id, "\" class='bx bx-trash'></i></div>");
   });
   var todosText = document.querySelectorAll('.todo__item');
-  var _loop_1 = function _loop_1(k) {
-    k.addEventListener('click', function () {
-      store.dispatch({
-        type: 'SET_TODO',
-        payload: Number(k.id)
-      });
-    });
-  };
   for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
     var k = todosText_1[_i];
-    _loop_1(k);
+    k.addEventListener('click', function (e) {
+      // let idK: string = String(k.id);
+      store.dispatch({
+        type: 'SET_TODO',
+        payload: {
+          id: e.target.id
+        }
+      });
+    });
   }
   var todoDelete = document.querySelectorAll('.bx-trash');
-  var _loop_2 = function _loop_2(k) {
+  var _loop_1 = function _loop_1(k) {
     k.addEventListener('click', function (e) {
       store.dispatch({
         type: 'REMOVE_TODO',
-        payload: Number(k.id)
+        payload: {
+          id: k.id
+        }
       });
     });
   };
   for (var _a = 0, todoDelete_1 = todoDelete; _a < todoDelete_1.length; _a++) {
     var k = todoDelete_1[_a];
-    _loop_2(k);
+    _loop_1(k);
   }
 }
 updateTodo();
 store.subscribe(updateTodo);
-// store.dispatch({
-//     type: 'REMOVE_TODO',
-//     payload: 0
-// })
-var storage = store.getState();
-// console.log(storage.find(todo => todo.id === 0).done = false )
-console.log(store.getState());
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nikita',
-//         done: false,
-//         id: 3
-//     }
-// })
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nibakita',
-//         done: false,
-//         id: 4
-//     }
-// })
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Nissta',
-//         done: false,
-//         id: 5
-//     }
-// })
 var buttonAddTodo = document.querySelector('.add');
 buttonAddTodo === null || buttonAddTodo === void 0 ? void 0 : buttonAddTodo.addEventListener('click', function () {
   var input = document.querySelector('.input');
-  if ((input === null || input === void 0 ? void 0 : input.value) !== '') {
+  if (input.value !== '') {
+    var value = String(input.value);
     store.dispatch({
       type: "ADD_TODO",
       payload: {
-        text: input === null || input === void 0 ? void 0 : input.value,
-        done: false,
-        id: store.getState().length
+        text: value
       }
     });
     input.value = "";
@@ -316,27 +334,6 @@ showState === null || showState === void 0 ? void 0 : showState.addEventListener
   var state = store.getState();
   console.log(state);
 });
-// console.log(store.getState())
-// store.dispatch({
-//     type: 'SET_TODO',
-//     payload: '0'
-// })
-// store.dispatch({
-//     type: 'REMOVE_TODO',
-//     payload: {
-//         text: 'Nikita',
-//         done: false,
-//         id: 3
-//     }
-// })
-// store.dispatch({
-//     type: 'ADD_TODO',
-//     payload: {
-//         text: 'Aleryt',
-//         done: false,
-//         id: 3
-//     }
-// })
 // function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
 //     let state = initialState;
 //     return {
@@ -437,7 +434,7 @@ showState === null || showState === void 0 ? void 0 : showState.addEventListener
 //     reducer: Reducer<T>;
 //     initialState: T;
 // }
-},{"./redux/store":"redux/store.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./redux/store":"redux/store.ts","nanoid":"node_modules/nanoid/index.browser.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -462,7 +459,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64359" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50771" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
