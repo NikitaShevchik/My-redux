@@ -3,6 +3,9 @@ export interface ITodo {
     done?: boolean,
     id?: string
 }
+
+export interface TodoInterface {};
+export type TodoType = {};
 export interface IAction<T> {
     type: string,
     payload?: Partial<T>

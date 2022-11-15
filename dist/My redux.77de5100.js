@@ -117,32 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"redux/store.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createStore = void 0;
-function createStore(reducer, initialState) {
-  var state = initialState;
-  var subscribing;
-  return {
-    getState: function getState() {
-      return state;
-    },
-    dispatch: function dispatch(action) {
-      state = reducer(state, action);
-      subscribing();
-      return action;
-    },
-    subscribe: function subscribe(subscrib) {
-      subscribing = subscrib;
-    }
-  };
-}
-exports.createStore = createStore;
-},{}],"node_modules/nanoid/url-alphabet/index.js":[function(require,module,exports) {
+})({"node_modules/nanoid/url-alphabet/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -208,7 +183,32 @@ var nanoid = function nanoid() {
   }, '');
 };
 exports.nanoid = nanoid;
-},{"./url-alphabet/index.js":"node_modules/nanoid/url-alphabet/index.js"}],"index.ts":[function(require,module,exports) {
+},{"./url-alphabet/index.js":"node_modules/nanoid/url-alphabet/index.js"}],"redux/store.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createStore = void 0;
+function createStore(reducer, initialState) {
+  var state = initialState;
+  var subscribing;
+  return {
+    getState: function getState() {
+      return state;
+    },
+    dispatch: function dispatch(action) {
+      state = reducer(state, action);
+      subscribing();
+      return action;
+    },
+    subscribe: function subscribe(subscrib) {
+      subscribing = subscrib;
+    }
+  };
+}
+exports.createStore = createStore;
+},{}],"index.ts":[function(require,module,exports) {
 "use strict";
 
 var __assign = this && this.__assign || function () {
@@ -223,26 +223,32 @@ var __assign = this && this.__assign || function () {
   };
   return __assign.apply(this, arguments);
 };
+var __spreadArray = this && this.__spreadArray || function (to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var index_1 = require("./node_modules/nanoid/index");
 var store_1 = require("./redux/store");
-var nanoid_1 = require("nanoid");
-function id() {
-  return (0, nanoid_1.nanoid)();
-}
 var todoState = [{
   text: 'Do homework',
   done: false,
-  id: id()
+  id: (0, index_1.nanoid)()
 }, {
   text: 'Make coffee',
   done: false,
-  id: id()
+  id: (0, index_1.nanoid)()
 }, {
   text: 'Make popop',
   done: false,
-  id: id()
+  id: (0, index_1.nanoid)()
 }];
 var todoActionTypes;
 (function (todoActionTypes) {
@@ -253,25 +259,22 @@ var todoActionTypes;
 function todoReducer(state, action) {
   switch (action.type) {
     case todoActionTypes.ADD_TODO:
-      state.push(__assign(__assign({}, action.payload), {
+      return __spreadArray(__spreadArray([], state, true), [__assign(__assign({}, action.payload), {
         done: false,
-        id: id()
-      }));
-      return state;
+        id: (0, index_1.nanoid)()
+      })], false);
     case todoActionTypes.REMOVE_TODO:
-      var filterState = state.filter(function (todo) {
+      return state.filter(function (todo) {
         var _a;
         return ((_a = action.payload) === null || _a === void 0 ? void 0 : _a.id) !== todo.id;
       });
-      return filterState;
     case todoActionTypes.SET_TODO:
-      var newState = state.map(function (todo) {
+      return state.map(function (todo) {
         var _a;
         return todo.id === ((_a = action.payload) === null || _a === void 0 ? void 0 : _a.id) ? __assign(__assign({}, todo), {
           done: !todo.done
         }) : todo;
       });
-      return newState;
     default:
       return state;
   }
@@ -279,40 +282,42 @@ function todoReducer(state, action) {
 var store = (0, store_1.createStore)(todoReducer, todoState);
 var todo = document.querySelector('.todo');
 function updateTodo() {
-  var storage = store.getState();
-  todo.innerHTML = '';
-  storage.map(function (item) {
-    return todo.innerHTML += "<div class=\"todo__element\" ><p id=\"".concat(item.id, "\" data-done=\"").concat(item.done, "\" class=\"todo__item\">").concat(item.text, "</p><i id=\"").concat(item.id, "\" class='bx bx-trash'></i></div>");
-  });
-  var todosText = document.querySelectorAll('.todo__item');
-  var _loop_1 = function _loop_1(todosTextContent) {
-    todosTextContent.addEventListener('click', function () {
-      store.dispatch({
-        type: todoActionTypes.SET_TODO,
-        payload: {
-          id: todosTextContent.id
-        }
-      });
+  if (todo) {
+    var storage = store.getState();
+    todo.innerHTML = '';
+    storage.map(function (item) {
+      return todo.innerHTML += "<div class=\"todo__element\" ><p id=\"".concat(item.id, "\" data-done=\"").concat(item.done, "\" class=\"todo__item\">").concat(item.text, "</p><i id=\"").concat(item.id, "\" class='bx bx-trash'></i></div>");
     });
-  };
-  for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
-    var todosTextContent = todosText_1[_i];
-    _loop_1(todosTextContent);
+    var todosText = document.querySelectorAll('.todo__item');
+    var _loop_1 = function _loop_1(element) {
+      element.addEventListener('click', function () {
+        store.dispatch({
+          type: todoActionTypes.SET_TODO,
+          payload: {
+            id: element.id
+          }
+        });
+      });
+    };
+    for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
+      var element = todosText_1[_i];
+      _loop_1(element);
+    }
   }
   var todoDelete = document.querySelectorAll('.bx-trash');
-  var _loop_2 = function _loop_2(k) {
-    k.addEventListener('click', function () {
+  var _loop_2 = function _loop_2(element) {
+    element.addEventListener('click', function () {
       store.dispatch({
         type: todoActionTypes.REMOVE_TODO,
         payload: {
-          id: k.id
+          id: element['id']
         }
       });
     });
   };
   for (var _a = 0, todoDelete_1 = todoDelete; _a < todoDelete_1.length; _a++) {
-    var k = todoDelete_1[_a];
-    _loop_2(k);
+    var element = todoDelete_1[_a];
+    _loop_2(element);
   }
 }
 updateTodo();
@@ -320,8 +325,8 @@ store.subscribe(updateTodo);
 var buttonAddTodo = document.querySelector('.add');
 buttonAddTodo === null || buttonAddTodo === void 0 ? void 0 : buttonAddTodo.addEventListener('click', function () {
   var input = document.querySelector('.input');
-  if (input.value !== '') {
-    var value = String(input.value);
+  if (input.value) {
+    var value = input.value;
     store.dispatch({
       type: todoActionTypes.ADD_TODO,
       payload: {
@@ -336,107 +341,7 @@ showState === null || showState === void 0 ? void 0 : showState.addEventListener
   var state = store.getState();
   console.log(state);
 });
-// function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
-//     let state = initialState;
-//     return {
-//         getState: () => state,
-//         dispatch(action: {
-//             type: string;
-//             payload?: Partial<T>
-//         }) {
-//             state = reducer(state, action);
-//             return action;
-//         },
-//     }
-// }
-// const initialState = 10;
-// enum actionsType {
-//     ADD_ONE = 'ADD_ONE',
-//     MIN_ONE = 'MIN_ONE'
-// }
-// function reducerStore(state, action) {
-//     switch (action.type) {
-//         case actionsType.ADD_ONE:
-//             return state = state + 1;
-//         case actionsType.MIN_ONE:
-//             return state = state - 1;
-//         default:
-//             return state
-//     }
-// }
-// const store = createStore(reducerStore, initialState);
-// console.log(store.getState())
-// console.log(store.dispatch({
-//     type: 'ADD_ONE'
-// }))
-// console.log(store.dispatch({
-//     type: 'ADD_ONE'
-// }))
-// console.log(store.dispatch({
-//     type: 'ADD_ONE'
-// }))
-// console.log(store.getState())
-//----------------------------------------------------------------------------------------------------------------------------------
-// type FunctionalComponent<T extends object = object> = (props: T & { children: any }) => any;
-// const component: FunctionalComponent<{ name: string, age: number }> = (
-//     {
-//         children
-//     }
-// ) => {
-// }
-// function createStore<T>(reducer: (state: T, action: { type: string, payload?: Partial<T> }) => T, initialState: T) {
-//     let state = initialState;
-//     // let subscribing;
-//     // function dispatch(action) {
-//     //     reducer(state, action);
-//     //     return action;
-//     // }
-//     return {
-//         getState: () => state,
-//         dispatch(action) {
-//             state = reducer(state, action);
-//             // subscribing()
-//             return action;
-//         },
-//         // subscribe(subscrib) {
-//         //     subscribing = subscrib;
-//         // }
-//     }
-// }
-// function createStore<T>(reducer: (state: T, action: { type: string; payload?: Partial<T> }) => T, initialState: T) {
-//     let state = initialState;
-//     let subscribing;
-//     function dispatch(action: {
-//         type: string;
-//         payload?: Partial<T>
-//     }) {
-//         reducer(state, action);
-//     }
-//     return {
-//         getState: () => state,
-//         dispatch(action) {
-//             state = reducer(state, action);
-//             subscribing()
-//             return action;
-//         },
-//         subscribe(subscrib) {
-//             subscribing = subscrib;
-//         }
-//     }
-// }
-// interface Action<T> {
-//     type: string;
-//     payload?: Partial<T>
-// }
-// interface Reducer<T> {
-//     state: T;
-//     action: Action<T>;
-// }
-// interface CreateStoreInterface<T> {
-//     reducer: Reducer<T>;
-//     initialState: T;
-// }
-},{"./redux/store":"redux/store.ts","nanoid":"node_modules/nanoid/index.browser.js"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./node_modules/nanoid/index":"node_modules/nanoid/index.browser.js","./redux/store":"redux/store.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -461,7 +366,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50771" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61349" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
