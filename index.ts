@@ -10,8 +10,8 @@ interface ITodo {
     id?: string
 }
 interface IAction<T> {
-    type: string;
-    payload?: Partial<T>;
+    type: string,
+    payload?: Partial<T>
 }
 const todoState: ITodo[] = [
     {
@@ -77,7 +77,7 @@ function updateTodo() {
             store.dispatch({
                 type: 'SET_TODO',
                 payload: {
-                    id: e.target.id
+                    id: k.id
                 }
             })
         })

@@ -285,20 +285,23 @@ function updateTodo() {
     return todo.innerHTML += "<div class=\"todo__element\" ><p id=\"".concat(y.id, "\" data-done=\"").concat(y.done, "\" class=\"todo__item\">").concat(y.text, "</p><i id=\"").concat(y.id, "\" class='bx bx-trash'></i></div>");
   });
   var todosText = document.querySelectorAll('.todo__item');
-  for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
-    var k = todosText_1[_i];
+  var _loop_1 = function _loop_1(k) {
     k.addEventListener('click', function (e) {
       // let idK: string = String(k.id);
       store.dispatch({
         type: 'SET_TODO',
         payload: {
-          id: e.target.id
+          id: k.id
         }
       });
     });
+  };
+  for (var _i = 0, todosText_1 = todosText; _i < todosText_1.length; _i++) {
+    var k = todosText_1[_i];
+    _loop_1(k);
   }
   var todoDelete = document.querySelectorAll('.bx-trash');
-  var _loop_1 = function _loop_1(k) {
+  var _loop_2 = function _loop_2(k) {
     k.addEventListener('click', function (e) {
       store.dispatch({
         type: 'REMOVE_TODO',
@@ -310,7 +313,7 @@ function updateTodo() {
   };
   for (var _a = 0, todoDelete_1 = todoDelete; _a < todoDelete_1.length; _a++) {
     var k = todoDelete_1[_a];
-    _loop_1(k);
+    _loop_2(k);
   }
 }
 updateTodo();
